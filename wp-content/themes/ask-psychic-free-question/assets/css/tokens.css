@@ -1,0 +1,138 @@
+/**
+ * Design Tokens — CSS Custom Properties
+ * Palette: Lavender + White + Gold + Light Purple
+ *
+ * @package Ask_Psychic_Free_Question
+ */
+
+:root {
+	/* Colors — Primary (Lavender) */
+	--color-primary: #C8A8E9;
+	--color-primary-hover: #b590d8;
+	--color-primary-light: rgba(200, 168, 233, 0.15);
+	--color-primary-dark: #9B7ACC;
+
+	/* Colors — Secondary (Light Purple bg) */
+	--color-secondary: #E8DFF5;
+
+	/* Colors — Accent (Gold) */
+	--color-accent: #D4A843;
+	--color-accent-hover: #c0972f;
+	--color-accent-light: rgba(212, 168, 67, 0.15);
+
+	/* Colors — Backgrounds */
+	--color-bg-soft: #F5F0FC;
+	--color-bg-white: #FFFFFF;
+
+	/* Colors — Neutral */
+	--color-text-primary: #2D2540;
+	--color-text-secondary: #6B6080;
+	--color-text-light: #9E94B0;
+	--color-border: #E4DCF0;
+	--color-white: #FFFFFF;
+
+	/* Colors — Semantic */
+	--color-success: #5CB085;
+	--color-error: #D9534F;
+	--color-warning: #D4A843;
+	--color-info: #7B9FD4;
+
+	/* Gradients */
+	--gradient-hero: linear-gradient(135deg, #FFFFFF 0%, #F5F0FC 40%, #EDE4F8 100%);
+	--gradient-section: linear-gradient(180deg, #FFFFFF 0%, #F5F0FC 100%);
+	--gradient-card-hover: linear-gradient(180deg, #FFFFFF 0%, #F5F0FC 100%);
+
+	/* Typography — Families */
+	--font-heading: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+	--font-body: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	--font-accent: 'Cormorant Garamond', Georgia, serif;
+
+	/* Typography — Scale */
+	--text-h1: 3.5rem;
+	--text-h2: 2.5rem;
+	--text-h3: 1.75rem;
+	--text-h4: 1.375rem;
+	--text-h5: 1.125rem;
+	--text-body-lg: 1.125rem;
+	--text-body: 1rem;
+	--text-body-sm: 0.875rem;
+	--text-caption: 0.75rem;
+
+	/* Typography — Line Heights */
+	--leading-h1: 1.15;
+	--leading-h2: 1.2;
+	--leading-h3: 1.3;
+	--leading-h4: 1.4;
+	--leading-body: 1.7;
+	--leading-body-lg: 1.8;
+
+	/* Typography — Letter Spacing */
+	--tracking-heading: 0.01em;
+	--tracking-body: 0;
+
+	/* Spacing (4px base unit) */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-10: 2.5rem;
+	--space-12: 3rem;
+	--space-16: 4rem;
+	--space-20: 5rem;
+	--space-24: 6rem;
+
+	/* Border Radius */
+	--radius-sm: 4px;
+	--radius-md: 8px;
+	--radius-lg: 12px;
+	--radius-xl: 20px;
+	--radius-2xl: 32px;
+	--radius-full: 9999px;
+
+	/* Shadows — soft & ethereal */
+	--shadow-xs: 0 1px 3px rgba(155, 122, 204, 0.06);
+	--shadow-sm: 0 2px 8px rgba(155, 122, 204, 0.08), 0 1px 3px rgba(155, 122, 204, 0.05);
+	--shadow-md: 0 4px 16px rgba(155, 122, 204, 0.12), 0 2px 6px rgba(155, 122, 204, 0.06);
+	--shadow-lg: 0 8px 32px rgba(155, 122, 204, 0.16), 0 4px 12px rgba(155, 122, 204, 0.08);
+	--shadow-xl: 0 16px 56px rgba(155, 122, 204, 0.18), 0 8px 24px rgba(155, 122, 204, 0.10);
+	--shadow-inner: inset 0 2px 6px rgba(155, 122, 204, 0.08);
+	--shadow-focus: 0 0 0 3px rgba(200, 168, 233, 0.4);
+
+	/* Transitions */
+	--transition-fast: 150ms ease-out;
+	--transition-normal: 250ms ease-out;
+	--transition-slow: 400ms ease-out;
+
+	/* Layout */
+	--container-max: 1200px;
+	--container-narrow: 680px;
+	--container-medium: 900px;
+	--header-height: 72px;
+
+	/* Section Padding */
+	--section-padding: var(--space-24);
+}
+
+/* Mobile scale adjustments */
+@media (max-width: 767px) {
+	:root {
+		--text-h1: 2.25rem;
+		--text-h2: 1.75rem;
+		--text-h3: 1.375rem;
+		--text-h4: 1.125rem;
+		--text-h5: 1rem;
+		--section-padding: var(--space-12);
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	:root {
+		--text-h1: 2.75rem;
+		--text-h2: 2rem;
+		--text-h3: 1.5rem;
+		--section-padding: var(--space-16);
+	}
+}
