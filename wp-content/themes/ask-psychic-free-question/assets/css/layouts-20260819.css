@@ -1891,3 +1891,21 @@ body {
 		border-radius: 20px;
 	}
 }
+
+/* ==========================================================================
+   Footer background fix (2026-08-21)
+   footer.php emits an inline background-image (footer-bg.webp) that overrides
+   the dark navy wash defined above, leaving the white footer text unreadable
+   on a light lavender photo. Reclaim the layer order with !important and keep
+   the photo as a subtle texture underneath.
+   ========================================================================== */
+
+.site-footer {
+	background-color: #111a33 !important;
+	background-image:
+		linear-gradient(180deg, rgba(17, 26, 51, 0.93), rgba(17, 26, 51, 0.97)),
+		url("../images/footer-bg.webp") !important;
+	background-size: cover !important;
+	background-position: center top !important;
+	background-repeat: no-repeat !important;
+}
