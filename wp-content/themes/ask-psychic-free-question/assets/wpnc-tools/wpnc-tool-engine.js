@@ -70,7 +70,7 @@
 
   function clarityCoach(question) {
     var clean = String(question || '').trim().replace(/\s+/g, ' ');
-    if (!clean) return { question: '', prompts: ['What would you most like to understand?'], ready: false };
+    if (!clean) return { question: '', prompts: ['What would you most like to understand?'], ready: false, error: 'Please enter your question' };
     var prompts = [];
     if (clean.length < 25) prompts.push('What part of this situation feels most important right now?');
     if (!/[?]/.test(clean)) prompts.push('Turn it into one open question ending with a question mark.');
@@ -163,7 +163,7 @@
     if (type === 'medium_matcher') {
       body = '<label for="wpnc-need">What kind of support are you exploring?</label><select id="wpnc-need" data-need>' + (config.needs || []).map(function (x) { return '<option value="' + escapeHtml(x.value) + '">' + escapeHtml(x.label) + '</option>'; }).join('') + '</select><button type="button" data-action="match">Show reflection matches</button>';
     } else if (type === 'clarity_coach' || type === 'tarot_workshop') {
-      body = '<label for="wpnc-question">Your question</label><textarea id="wpnc-question" rows="5" data-question placeholder="Write in your own words..."></textarea>' + (type === 'tarot_workshop' ? '<label for="wpnc-spread">Reflection format</label><select id="wpnc-spread" data-spread><option value="single">One card: the focus</option><option value="three">Three cards: context, choice, next step</option></select>' : '') + '<button type="button" data-action="reflect">Continue</button>';
+      body = '<label for="wpnc-question">Your question</label><textarea id="wpnc-question" rows="5" data-question required aria-required="true" placeholder="Write in your own words..."></textarea>' + (type === 'tarot_workshop' ? '<label for="wpnc-spread">Reflection format</label><select id="wpnc-spread" data-spread><option value="single">One card: the focus</option><option value="three">Three cards: context, choice, next step</option></select>' : '') + '<button type="button" data-action="reflect">Continue</button>';
     } else if (type === 'reflection_chat') {
       var firstMessage = (config.conversation || [config.instructions || 'Take a quiet moment and write what is present for you.'])[0];
       body = '<p>' + escapeHtml(config.instructions || 'Take a quiet moment and write what is present for you.') + '</p><div class="wpnc-tool__timer" data-timer aria-live="polite">03:00</div><div class="wpnc-tool__chat" role="log" aria-live="polite"><ol data-transcript><li><strong>Guide:</strong> ' + escapeHtml(firstMessage) + '</li></ol></div><label for="wpnc-reflection">Your reflection</label><textarea id="wpnc-reflection" rows="5" data-reflection></textarea><div class="wpnc-tool__actions"><button type="button" data-action="timer">Start timer</button><button type="button" data-action="save-line">Send reflection</button></div>';
@@ -182,7 +182,15 @@
         var matches = matchMedium(root.querySelector('[data-need]').value, config.readers || []);
         resultBox(root, 'Possible directions', matches.map(function (m) { return '<p><strong>' + escapeHtml(m.reader.name) + '</strong> — ' + escapeHtml(m.reader.note || 'A possible fit for this reflection.') + '</p>'; }).join(''));
       } else if (action === 'reflect') {
-        var q = clarityCoach(root.querySelector('[data-question]').value);
+        var questionInput = root.querySelector('[data-question]');
+        var q = clarityCoach(questionInput.value);
+        if (q.error) {
+          resultBox(root, q.error, '<p>' + escapeHtml(q.error) + ' to continue.</p>');
+          questionInput.setAttribute('aria-invalid', 'true');
+          questionInput.focus();
+          return;
+        }
+        questionInput.removeAttribute('aria-invalid');
         if (type === 'tarot_workshop' && q.question) {
           var cards = tarotDraw(q.question, root.querySelector('[data-spread]').value, config.deck);
           resultBox(root, 'A symbolic reflection spread', '<p>' + cards.map(escapeHtml).join(' · ') + '</p><p>Use each card as a prompt, not a prediction. ' + q.prompts.map(escapeHtml).join(' ') + '</p>');
