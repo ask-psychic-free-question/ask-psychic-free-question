@@ -1,0 +1,10 @@
+{
+  "id": "site-8-question-clarity",
+  "type": "clarity_coach",
+  "theme": {"accent":"#a34d66","accentStrong":"#733247","soft":"#fff1f4"},
+  "eyebrow": "Question workshop",
+  "title": "Make space for a clearer question",
+  "intro": "A short exercise can help you decide what you actually want to explore before seeking a reading.",
+  "disclaimer": "For entertainment and self-reflection only. This exercise cannot provide a real psychic answer or guarantee a reply from a person.",
+  "fallback": "Write your question in a notebook and revisit it tomorrow."
+}
