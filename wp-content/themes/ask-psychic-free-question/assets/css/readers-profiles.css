@@ -1,1 +1,6 @@
 .reader-card__photo{object-position:center;border-radius:50%;background:#F2F6F5}
+
+/* CTA buttons in reader profile cards */
+.readers-grid .reader-card { display: flex; flex-direction: column; height: 100%; }
+.reader-card__cta { align-self: flex-start; margin-top: auto; }
+@media (max-width: 640px) { .reader-card__cta { align-self: stretch; text-align: center; } }
