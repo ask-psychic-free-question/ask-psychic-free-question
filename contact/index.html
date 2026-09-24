@@ -166,6 +166,20 @@ h4 {
 	}
 	</style>
 	<meta property="og:image" content="https://ask-psychic-free-question.com/wp-content/uploads/2026/04/header_logo.png" />
+<style id="apfq-quiz-modal-css">
+.apfq-quiz-modal{width:min(92vw,32rem);max-width:none;padding:0;border:1px solid #c8d8d5;border-radius:1.25rem;color:#24383a;background:#fff;box-shadow:0 24px 80px rgba(20,42,43,.28)}
+.apfq-quiz-modal::backdrop{background:rgba(15,35,37,.58);backdrop-filter:blur(3px)}
+.apfq-quiz-modal__card{position:relative;padding:clamp(2rem,6vw,3rem);text-align:center}
+.apfq-quiz-modal__eyebrow{margin:0 0 .75rem;color:#a4753b;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.apfq-quiz-modal h2{margin:0 0 .75rem;color:#173e42;font:600 clamp(1.6rem,5vw,2.1rem)/1.2 Georgia,serif}
+.apfq-quiz-modal__card>p:not(.apfq-quiz-modal__eyebrow){margin:0;color:#526866}
+.apfq-quiz-modal__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;margin-top:1.75rem}
+.apfq-quiz-modal__actions .btn{min-height:2.9rem;cursor:pointer}
+.apfq-quiz-modal__close{position:absolute;top:.75rem;right:.85rem;width:2.25rem;height:2.25rem;border:0;border-radius:50%;color:#526866;background:transparent;font-size:1.6rem;cursor:pointer}
+.apfq-quiz-modal__close:hover,.apfq-quiz-modal__close:focus-visible{background:#f2f6f5}
+.blog-card__image img[src*="blog-love.webp"],.blog-card__image img[src*="blog-chat.webp"],.blog-card__image img[src*="blog-reflection.webp"]{width:100%;height:100%;object-fit:cover;display:block}
+@media(max-width:30rem){.apfq-quiz-modal__actions{flex-direction:column}.apfq-quiz-modal__actions .btn{width:100%}}
+</style>
 </head>
 <body class="wp-singular page-template-default page page-id-65 wp-custom-logo wp-theme-ask-psychic-free-question singular">
 
@@ -204,7 +218,7 @@ h4 {
 				<p>Contacting Free Psychic Question should feel simple and low pressure. This page is for general information about the service, editorial questions, accessibility feedback, and partnership enquiries. We do not ask you to publish a question here or send sensitive personal information by email.</p>
 <h2>For a free psychic question</h2>
 <p>If you came here because you want guidance about love, work, family, timing, or a personal decision, use the managed reading flow. It explains the next step and lets you review the partner experience before sharing anything. Do not include passwords, payment details, government identifiers, medical records, or private documents in a general enquiry.</p>
-<p><a href="/go/" rel="nofollow sponsored">Continue to the free question flow</a></p>
+<p><a href="https://ask-psychic-free-question.com/go/" rel="nofollow sponsored">Continue to the free question flow</a></p>
 <h2>For general enquiries</h2>
 <p>For a question about this website, its articles, a broken link, or the way information is presented, please use the contact details shown in the site footer. Keep your message general and include the page URL so the issue can be located. We aim to respond to genuine website enquiries as soon as practical.</p>
 <h2>Editorial and correction requests</h2>
@@ -219,7 +233,7 @@ h4 {
 <p>Use the minimum information needed for a general enquiry. Read the privacy and terms pages before using an external reading service. You are always entitled to pause, close the page, or decide not to continue.</p>
 <h2>Ready to ask privately?</h2>
 <p>When your goal is a free reading rather than a website enquiry, the shortest route is below.</p>
-<p><a href="/go/" rel="nofollow sponsored">Ask your free psychic question</a></p>
+<p><a href="https://ask-psychic-free-question.com/go/" rel="nofollow sponsored">Ask your free psychic question</a></p>
 									<h2>Keep the process grounded</h2>
 					<p>Spiritual guidance works best when it supports clear thinking, consent, and personal responsibility. You can ask for a perspective without handing over control of your decisions. Read slowly, notice what resonates, and give yourself time before acting on an emotionally important interpretation.</p>
 					<h3>Privacy comes first</h3>
@@ -320,5 +334,9 @@ h4 {
 </script>
 <script id="apfq-navigation-js" defer src="https://ask-psychic-free-question.com/wp-content/themes/ask-psychic-free-question/assets/js/navigation.js?ver=20260904-redesign"></script>
 <script id="apfq-main-js" defer src="https://ask-psychic-free-question.com/wp-content/themes/ask-psychic-free-question/assets/js/main.js?ver=20260904-redesign"></script>
+<dialog class="apfq-quiz-modal" id="apfq-quiz-modal" aria-labelledby="apfq-quiz-title" aria-describedby="apfq-quiz-description"><div class="apfq-quiz-modal__card"><button class="apfq-quiz-modal__close" type="button" aria-label="Close dialog">&times;</button><p class="apfq-quiz-modal__eyebrow">Free psychic question</p><h2 id="apfq-quiz-title">Are you ready to take the quiz?</h2><p id="apfq-quiz-description">It takes just a moment to get started.</p><div class="apfq-quiz-modal__actions"><button class="btn btn-gold" type="button" data-quiz-confirm>Yes, let's begin</button><button class="btn btn-outline" type="button" data-quiz-cancel>Not now</button></div></div></dialog>
+<script id="apfq-quiz-modal-js">
+(function(){'use strict';var dialog=document.getElementById('apfq-quiz-modal');if(!dialog||typeof dialog.showModal!=='function')return;var destination=new URL('/go/',window.location.origin).href;var opener=null;document.addEventListener('click',function(event){var link=event.target.closest('a[href]');if(!link)return;var url;try{url=new URL(link.href,window.location.href)}catch(error){return}if(url.origin!==window.location.origin||url.pathname.replace(/\/$/,'')!=='/go')return;event.preventDefault();opener=link;dialog.showModal()});dialog.querySelector('[data-quiz-confirm]').addEventListener('click',function(){window.location.assign(destination)});function closeDialog(){dialog.close();if(opener)opener.focus()}dialog.querySelector('[data-quiz-cancel]').addEventListener('click',closeDialog);dialog.querySelector('.apfq-quiz-modal__close').addEventListener('click',closeDialog);dialog.addEventListener('click',function(event){if(event.target===dialog)closeDialog()})})();
+</script>
 </body>
 </html>
