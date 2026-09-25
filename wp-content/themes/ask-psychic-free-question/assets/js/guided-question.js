@@ -12,6 +12,14 @@
     { name: 'The Honest Voice', meaning: 'Ask what you already know, and what you still need to ask or express.' },
     { name: 'The Boundary', meaning: 'Reflect on what you can choose for yourself and what belongs to someone else.' }
   ];
+  var cardBox = document.getElementById('apfq-card');
+  var cardFlip = document.getElementById('apfq-card-flip');
+  cardFlip.addEventListener('click', function () {
+    var revealed = cardBox.classList.toggle('is-flipped');
+    cardFlip.setAttribute('aria-pressed', String(revealed));
+    cardFlip.setAttribute('aria-label', revealed ? 'Hide automatic reflection card: ' + document.getElementById('apfq-card-name').textContent : 'Reveal automatic reflection card');
+    cardFlip.querySelector('.apfq-question-tool__card-hint').textContent = revealed ? 'Flip card back' : 'Flip card';
+  });
   function showStep(index) {
     steps.forEach(function (step, i) { step.hidden = i !== index; });
     steps[index].querySelector('h2').focus();
@@ -33,8 +41,11 @@
     document.getElementById('apfq-result-question').textContent = question;
     document.getElementById('apfq-question-result').hidden = false;
     document.getElementById('apfq-reader-link').hidden = path.value !== 'reader';
-    var cardBox = document.getElementById('apfq-card');
     cardBox.hidden = path.value !== 'card';
+    cardBox.classList.remove('is-flipped');
+    cardFlip.setAttribute('aria-pressed', 'false');
+    cardFlip.setAttribute('aria-label', 'Reveal automatic reflection card');
+    cardFlip.querySelector('.apfq-question-tool__card-hint').textContent = 'Flip card';
     document.getElementById('apfq-result-title').textContent = path.value === 'reader' ? 'Your question is ready for a human reader' : 'Your symbolic reflection';
     document.getElementById('apfq-result-copy').textContent = path.value === 'reader'
       ? 'This tool prepared wording only. Continue to the reader service to request a human response.'
