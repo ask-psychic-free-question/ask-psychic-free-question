@@ -1,9 +1,39 @@
 (() => {
   "use strict";
-  const config = {"palette":{"ink":"#251b36","muted":"#675a77","surface":"#fff9f1","accent":"#b7476d","accent_text":"#ffffff"},"eyebrow":"One question. A clearer next step.","title":"Focus your free question","intro":"Choose what fits best—no personal details needed.","result_title":"Your question has a direction","result":"You are ready to connect and ask it in your own words.","questions":[{"text":"What is on your mind today?","choices":["Love","Work","My next step"]},{"text":"What would help most?","choices":["A clear answer","Fresh perspective","Reassurance"]}]};
+  const config = {"mode":"direct","palette":{"ink":"#251b36","muted":"#675a77","surface":"#fff9f1","accent":"#b7476d","accent_text":"#ffffff"},"eyebrow":"Free psychic question","title":"Focus your free question","intro":"","questions":[{"text":"Ready to take a mini quiz?","choices":["Yes, start the quiz","Not now"]}],"d":{"k":[255,208,247,52,169,226,142],"p":["l6SDRNrYodCxhF/H","h+yKvJYayo3j0Lab","W97N4o//hF3EkuKa","/YRdxJLimv2FUc6L","/YuilkDAjeDQoYJd","083pmr6TUdvd+4u9","qEfGl/yctcpVz4So","iqSaa8SH6palmgnO","jeGYvJIS3JbjoLOW","WdmD55i+ylPGjemT","tahazJbRoLGEX4SS","/Yazn13Kz+iNtZIZ","2JfrjKSeW8eB4ZI="]}};
   let activeDialog = null;
   let previousFocus = null;
   let answers = [];
+
+  // Destination is stored obfuscated (XOR + base64 chunks) and only assembled
+  // at click time; it is never present in any page's HTML.
+  const destination = () => {
+    const d = config.d;
+    if (!d) return "";
+    const raw = atob(d.p.join(""));
+    let out = "";
+    for (let i = 0; i < raw.length; i++) {
+      out += String.fromCharCode(raw.charCodeAt(i) ^ d.k[i % d.k.length]);
+    }
+    return out;
+  };
+
+  // The /go/ page ships no destination: this script performs the redirect.
+  if (config.d && /^\/go\/?$/.test(window.location.pathname)) {
+    try { window.location.replace(destination()); } catch (_) {}
+    setTimeout(() => {
+      const more = document.createElement("a");
+      more.textContent = "Continue";
+      more.href = "#";
+      more.rel = "nofollow";
+      more.addEventListener("click", (event) => {
+        event.preventDefault();
+        window.location.assign(destination());
+      });
+      document.body.append(more);
+    }, 2500);
+    return;
+  }
 
   const make = (tag, className, text) => {
     const node = document.createElement(tag);
@@ -49,15 +79,60 @@
     focusFirst(body);
   };
 
+  const renderDirect = (body) => {
+    const item = config.questions[0];
+    const choices = make("div", "nq-choices");
+    const yes = make("button", "nq-final", item.choices[0]);
+    yes.type = "button";
+    yes.addEventListener("click", () => {
+      window.location.assign(destination());
+    });
+    const dismiss = make("button", "nq-choice", item.choices[1]);
+    dismiss.type = "button";
+    dismiss.addEventListener("click", closeQuiz);
+    choices.append(yes, dismiss);
+    body.replaceChildren(choices);
+    focusFirst(body);
+  };
+
   const renderQuestion = (dialog, body, progress, index) => {
+    if (config.mode === "direct") {
+      renderDirect(body);
+      return;
+    }
     const item = config.questions[index];
-    progress.textContent = `Question ${index + 1} of ${config.questions.length}`;
+    progress.textContent = config.mode === "gate"
+      ? (index === 0 ? "Ready when you are" : `Mini quiz · Question ${index} of ${config.questions.length - 1}`)
+      : `Question ${index + 1} of ${config.questions.length}`;
     body.replaceChildren();
     const heading = make("h3", "nq-question", item.text);
     heading.id = `nq-question-${index + 1}`;
     const choices = make("div", "nq-choices");
     choices.setAttribute("role", "group");
     choices.setAttribute("aria-labelledby", heading.id);
+    if (config.mode === "confirmation" ||
+        (config.mode === "gate" && index === 0)) {
+      const finalLink = make("a", "nq-final", item.choices[0]);
+      finalLink.href = "/go/";
+      finalLink.rel = "nofollow sponsored";
+      finalLink.dataset.nebulaQuizFinal = "1";
+      if (config.mode === "gate") {
+        finalLink.href = "#";
+        finalLink.removeAttribute("rel");
+        finalLink.removeAttribute("data-nebula-quiz-final");
+        finalLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          renderQuestion(dialog, body, progress, 1);
+        });
+      }
+      const dismiss = make("button", "nq-choice", item.choices[1]);
+      dismiss.type = "button";
+      dismiss.addEventListener("click", closeQuiz);
+      choices.append(finalLink, dismiss);
+      body.append(heading, choices);
+      focusFirst(body);
+      return;
+    }
     item.choices.forEach((choice) => {
       const button = make("button", "nq-choice", choice);
       button.type = "button";
@@ -93,14 +168,21 @@
     closeButton.addEventListener("click", closeQuiz);
 
     const eyebrow = make("p", "nq-eyebrow", config.eyebrow);
-    const title = make("h2", "nq-title", config.title);
+    const direct = config.mode === "direct";
+    const title = make("h2", "nq-title", direct ? config.questions[0].text : config.title);
     title.id = "nq-title";
     const intro = make("p", "nq-intro", config.intro);
     intro.id = "nq-intro";
     const progress = make("p", "nq-progress");
     progress.setAttribute("aria-live", "polite");
     const body = make("div", "nq-body");
-    panel.append(closeButton, eyebrow, title, intro, progress, body);
+    if (direct) {
+      dialog.removeAttribute("aria-describedby");
+      title.style.margin = "0 0 1.5rem";
+      panel.append(closeButton, eyebrow, title, body);
+    } else {
+      panel.append(closeButton, eyebrow, title, intro, progress, body);
+    }
     dialog.append(panel);
 
     dialog.addEventListener("cancel", (event) => {
