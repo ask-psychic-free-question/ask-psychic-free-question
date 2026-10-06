@@ -503,54 +503,55 @@ h3 { font-weight: 400; }
    ========================================================================== */
 
 .site-footer {
-	background:  #F2F6F5;
-	border-top:  1px solid #C8D8D5;
-	color:       #526866;
+	background:  #1C2744;
+	border-top:  1px solid #344261;
+	color:       #DCE5F2;
 }
 
 .site-footer a {
-	color: #526866;
+	color: #DCE5F2;
 }
 
-.site-footer a:hover {
-	color: #173E42;
+.site-footer a:hover,
+.site-footer a:focus-visible {
+	color: #F6D58A;
 }
 
 .footer-col__logo {
 	font-family: Georgia, serif;
 	font-weight: 400;
-	color:       #173E42;
+	color:       #FFFFFF;
 }
 
 .footer-col__logo svg {
-	color: #173E42;
+	color: #F6D58A;
 }
 
 .footer-col__title {
 	font-family: Georgia, serif;
 	font-weight: 400;
-	color:       #24383A;
+	color:       #FFFFFF;
 }
 
 .footer-col__tagline {
-	color: #526866;
+	color: #DCE5F2;
 }
 
 .footer-col__links a {
-	color: #526866;
+	color: #DCE5F2;
 }
 
 .footer-bottom {
-	border-top-color: #C8D8D5;
+	border-top-color: #44516A;
 }
 
 .footer-bottom__copyright,
 .footer-bottom__links a {
-	color: #7A9294;
+	color: #C7D4E8;
 }
 
 .footer-bottom__links a:hover {
-	color: #173E42;
+	color: #F6D58A;
 }
 
 /* CTA button in footer */
@@ -652,3 +653,7 @@ a:focus-visible {
 		scroll-behavior:           auto   !important;
 	}
 }
+
+.site-footer .footer-instagram{display:inline-flex;align-items:center;gap:10px;margin-top:8px;text-decoration:none;font-weight:600}
+.site-footer .footer-instagram svg{display:block;flex:none;color:#F6D58A;transition:transform .2s ease}
+.site-footer .footer-instagram:hover svg,.site-footer .footer-instagram:focus-visible svg{transform:rotate(-8deg)}

@@ -16,6 +16,39 @@
 	padding-right: var(--space-6);
 }
 
+/* Site 8 grounded editorial overrides. Kept after the generated redesign. */
+.site-footer { background: #E9EEE7; border-top-color: #D4DDD4; }
+.footer-col__title { color: #24453D; }
+.footer-col__links--editorial { margin-bottom: var(--space-5); }
+.hero--split,
+.page-hero { background: linear-gradient(135deg, #F7F4ED 0%, #E9EEE7 100%); overflow: hidden; }
+.hero--split::before { display: none; }
+.hero__visual { background: #FFFFFF; border: 1px solid #D4DDD4; border-radius: 24px; }
+.hero__visual > img { filter: saturate(.86) contrast(1.02); }
+.horizon-mark { position: relative; display: inline-block; width: 28px; height: 12px; margin-right: .65rem; border-bottom: 1px solid currentColor; }
+.horizon-mark::before { content: ''; position: absolute; bottom: -1px; left: 9px; width: 9px; height: 9px; border: 1px solid currentColor; border-bottom: 0; border-radius: 50% 50% 0 0; }
+.testimonial-card { background: #24453D; border: 1px solid #24453D; border-radius: 24px; color: #F7F4ED; }
+.testimonial-card__quote,
+.testimonial-card__name,
+.testimonial-card__subtitle { color: inherit; }
+.testimonial-card__label { margin: 0 0 var(--space-5); color: #D4DDD4; font-size: var(--text-caption); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.card,
+.reader-card,
+.topic-card,
+.blog-card,
+.home-guide__copy,
+.home-guide__note,
+.home-guide__comparison,
+.home-guide__card { border-color: #D4DDD4; border-radius: 24px; }
+@media (max-width: 767px) {
+  .hero__visual { width: 100%; }
+  .hero__actions .btn { width: 100%; }
+  .trust-bar__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
 @media (max-width: 767px) {
 	.container {
 		padding-left: var(--space-4);
@@ -1892,20 +1925,34 @@ body {
 	}
 }
 
-/* ==========================================================================
-   Footer background fix (2026-08-21)
-   footer.php emits an inline background-image (footer-bg.webp) that overrides
-   the dark navy wash defined above, leaving the white footer text unreadable
-   on a light lavender photo. Reclaim the layer order with !important and keep
-   the photo as a subtle texture underneath.
-   ========================================================================== */
-
-.site-footer {
-	background-color: #111a33 !important;
-	background-image:
-		linear-gradient(180deg, rgba(17, 26, 51, 0.93), rgba(17, 26, 51, 0.97)),
-		url("../images/footer-bg.webp") !important;
-	background-size: cover !important;
-	background-position: center top !important;
-	background-repeat: no-repeat !important;
+/* Final site-8 layer: this position intentionally wins older redesign rules. */
+.site-footer { background: #E9EEE7; border-top-color: #D4DDD4; }
+.footer-col__title { color: #24453D; }
+.footer-col__links--editorial { margin-bottom: var(--space-5); }
+.hero--split,
+.page-hero { background: linear-gradient(135deg, #F7F4ED 0%, #E9EEE7 100%); overflow: hidden; }
+.hero--split::before { display: none; }
+.hero__visual { background: #FFFFFF; border: 1px solid #D4DDD4; border-radius: 24px; }
+.horizon-mark { position: relative; display: inline-block; width: 28px; height: 12px; margin-right: .65rem; border-bottom: 1px solid currentColor; }
+.horizon-mark::before { content: ''; position: absolute; bottom: -1px; left: 9px; width: 9px; height: 9px; border: 1px solid currentColor; border-bottom: 0; border-radius: 50% 50% 0 0; }
+.testimonial-card { background: #24453D; border: 1px solid #24453D; border-radius: 24px; color: #F7F4ED; }
+.testimonial-card__quote,
+.testimonial-card__name,
+.testimonial-card__subtitle { color: inherit; }
+.testimonial-card__label { margin: 0 0 var(--space-5); color: #D4DDD4; font-size: var(--text-caption); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.card,
+.reader-card,
+.topic-card,
+.blog-card,
+.home-guide__copy,
+.home-guide__note,
+.home-guide__comparison,
+.home-guide__card { border-color: #D4DDD4; border-radius: 24px; }
+@media (max-width: 767px) {
+  .hero__visual { width: 100%; }
+  .hero__actions .btn { width: 100%; }
+  .trust-bar__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
