@@ -1,4 +1,4 @@
-/* Original card prompts for a browser-only symbolic reflection. */
+/* Оригінальні трактування для символічного розкладу у браузері. */
 (() => {
   'use strict';
   const cards = [
@@ -26,20 +26,29 @@
     ['The World','◎','yes','A cycle may be ready to complete. Recognize what you have learned.','One loose end may deserve attention before you close this chapter.']
   ];
   const $ = id => document.getElementById(id);
-  const form = $('ynt-form');
-  if (!form) return;
+  const deck = $('ynt-deck');
+  if (!deck) return;
+  const picks = Array.from(deck.querySelectorAll('.ynt-pick'));
+  let drawn = false;
+  let shuffled = [];
+  // Відкидання залишку усуває упередження операції modulo.
   const random = max => {
     const values = new Uint32Array(1);
     const limit = Math.floor(4294967296 / max) * max;
-    do { crypto.getRandomValues(values); } while (values[0] >= limit);
+    do { window.crypto.getRandomValues(values); } while (values[0] >= limit);
     return values[0] % max;
   };
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-    if (!form.reportValidity()) return;
-    const question = $('ynt-question').value.trim();
-    if (!question) { $('ynt-question').focus(); return; }
-    const card = cards[random(cards.length)];
+  const shuffle = () => {
+    shuffled = cards.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = random(i + 1);
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+  };
+  const reveal = index => {
+    if (drawn) return;
+    drawn = true;
+    const card = shuffled[index];
     const reversed = random(2) === 1;
     const lean = reversed ? ({yes:'Maybe',no:'Maybe',maybe:'No'})[card[2]] : ({yes:'Yes',no:'No',maybe:'Maybe'})[card[2]];
     $('ynt-symbol').textContent = card[1];
@@ -49,12 +58,19 @@
     $('ynt-meaning').textContent = reversed ? card[4] : card[3];
     $('ynt-context').textContent = `${lean} is a symbolic lean, not a decision or forecast. Compare it with what you know about your question.`;
     $('ynt-prompt').textContent = lean === 'Yes' ? 'Name one small, reversible step you can try, and one sign that would tell you to pause.' : lean === 'No' ? 'What would need to change before this choice feels safe and aligned with your values?' : 'Which missing fact or conversation would make your next step clearer?';
+    $('ynt-selection').hidden = true;
     $('ynt-result').hidden = false;
     $('ynt-lean').focus();
-  });
+  };
+  picks.forEach((pick, index) => pick.addEventListener('click', () => reveal(index)));
+  shuffle();
+  deck.hidden = false;
+  $('ynt-deck-note').hidden = false;
   $('ynt-again').addEventListener('click', () => {
     $('ynt-result').hidden = true;
-    form.reset();
-    $('ynt-question').focus();
+    drawn = false;
+    shuffle();
+    $('ynt-selection').hidden = false;
+    picks[0].focus();
   });
 })();
