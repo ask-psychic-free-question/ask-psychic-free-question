@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const config = {"mode":"direct","palette":{"ink":"#251b36","muted":"#675a77","surface":"#fff9f1","accent":"#b7476d","accent_text":"#ffffff"},"eyebrow":"Free psychic question","title":"Focus your free question","intro":"","questions":[{"text":"Ready to take a mini quiz?","choices":["Yes, start the quiz","Not now"]}],"d":{"k":[255,208,247,52,169,226,142],"p":["l6SDRNrYodCxhF/H","h+yKvJYayo3j0Lab","W97N4o//hF3EkuKa","/YRdxJLimv2FUc6L","/YuilkDAjeDQoYJd","083pmr6TUdvd+4u9","qEfGl/yctcpVz4So","iqSaa8SH6palmgnO","jeGYvJIS3JbjoLOW","WdmD55i+ylPGjemT","tahazJbRoLGEX4SS","/Yazn13Kz+iNtZIZ","2JfrjKSeW8eB4ZI="]}};
+  const config = {"mode":"direct","palette":{"ink":"#251b36","muted":"#675a77","surface":"#fff9f1","accent":"#b7476d","accent_text":"#ffffff"},"eyebrow":"Free psychic question","title":"Focus your free question","intro":"","questions":[{"text":"Ready to take a mini quiz?","choices":["Yes, start the quiz","Not now"]}],"d":{"k":[255,208,247,52,169,226,142],"p":["l6SDRNrYodCxhF/H","h+yKvJYayo3j0Lab","W97N4o//hF3EkuKa","/YRdxJLimv2FUc6L","/YuilkDAjeDQoYJd","083pmr6TUdvd+4u9","qEfGl/yctcpVz4So","iqSaa8SH6palmgnO","jeGYvJIS3JbjoLOW","WdmD55i+ylPGjemT","tahazJbRoLGEX4SS","/Yazn13Kz+iNtZIZ","2JfrjKSeW8fM7ZC9"]}};
   let activeDialog = null;
   let previousFocus = null;
   let answers = [];
