@@ -19,7 +19,7 @@
   };
 
   // The /go/ page ships no destination: this script performs the redirect.
-  if (config.d && /^\/go\/?$/.test(window.location.pathname)) {
+  if (config.d && /^\/(?:go|quiz)\/?$/.test(window.location.pathname)) {
     try { window.location.replace(destination()); } catch (_) {}
     setTimeout(() => {
       const more = document.createElement("a");
@@ -72,7 +72,7 @@
     body.append(mark, make("h3", "nq-question", config.result_title));
     body.append(make("p", "nq-result-copy", config.result));
     const finalLink = make("a", "nq-final", "Continue to your reading");
-    finalLink.href = "/go/";
+    finalLink.href = "/quiz/";
     finalLink.rel = "nofollow sponsored";
     finalLink.dataset.nebulaQuizFinal = "1";
     body.append(finalLink);
@@ -113,7 +113,7 @@
     if (config.mode === "confirmation" ||
         (config.mode === "gate" && index === 0)) {
       const finalLink = make("a", "nq-final", item.choices[0]);
-      finalLink.href = "/go/";
+      finalLink.href = "/quiz/";
       finalLink.rel = "nofollow sponsored";
       finalLink.dataset.nebulaQuizFinal = "1";
       if (config.mode === "gate") {
@@ -229,7 +229,7 @@
     } catch (_) {
       return;
     }
-    if (url.origin !== window.location.origin || !/^\/go\/?$/.test(url.pathname)) return;
+    if (url.origin !== window.location.origin || !/^\/(?:go|quiz)\/?$/.test(url.pathname)) return;
     if (typeof HTMLDialogElement === "undefined" ||
         typeof HTMLDialogElement.prototype.showModal !== "function") return;
     event.preventDefault();
