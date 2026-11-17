@@ -1,36 +1,24 @@
-/* Оригінальні трактування для символічного розкладу у браузері. */
+/* Символічний розклад Yes/No: 1, 3 або 5 карт. Дані — yes-no-tarot-data.js, малюнки — yes-no-tarot-art.js. */
 (() => {
   'use strict';
-  const cards = [
-    ['The Fool','✧','yes','A new beginning has room to breathe. Curiosity may help you take a small first step.','A fresh start may be tempting you to skip a useful check. Slow down before you leap.'],
-    ['The Magician','✦','yes','You have more tools and influence than you may realize. Use one skill deliberately.','Your resources may be scattered. Choose one workable method before committing.'],
-    ['The High Priestess','☾','maybe','There is more to learn beneath the obvious answer. Give your intuition time to meet evidence.','Uncertainty may be masking a fact you can ask about. Seek clarity before deciding.'],
-    ['The Empress','❀','yes','This choice may grow through care, patience, and steady attention.','Care can become overextension. Check whether this choice also nourishes you.'],
-    ['The Emperor','♜','yes','Clear boundaries and a sound plan make this path more workable.','A rigid plan could miss what has changed. Revisit the rules before moving ahead.'],
-    ['The Hierophant','◇','maybe','Trusted guidance or an established process may help you see the next step.','An inherited rule may no longer fit. Ask whose expectations you are following.'],
-    ['The Lovers','♡','yes','The stronger choice may align with your values and an honest conversation.','Attraction alone may not settle this. Name the values in tension.'],
-    ['The Chariot','↟','yes','Momentum is possible when you choose a direction and keep your hands on the reins.','Pushing harder may pull you off course. Regain balance before accelerating.'],
-    ['Strength','♌','yes','Quiet courage and patience can carry this further than force.','You may be running low on energy. Rest or ask for support before deciding.'],
-    ['The Hermit','✶','maybe','A little solitude may reveal what you already know. Give yourself space to think.','Withdrawal may be hiding a conversation you need. Reconnect with a trusted person.'],
-    ['Wheel of Fortune','◉','maybe','Conditions are moving. Stay flexible and watch for a practical opening.','A turn of events may feel beyond your control. Focus on what you can influence.'],
-    ['Justice','⚖','maybe','Look at the facts, responsibilities, and likely effects on everyone involved.','An imbalance needs attention. Check assumptions and seek fair terms.'],
-    ['The Hanged Man','⌛','maybe','A pause or different viewpoint could change the answer.','Waiting without purpose may be draining you. Set a point to reassess.'],
-    ['Death','◒','no','An old form may need to end before the next one can begin.','Resistance to change can make a necessary ending harder. Release one outdated expectation.'],
-    ['Temperance','⚗','yes','A measured middle path may work better than an all-or-nothing move.','Too much compromise may blur what matters. Rebalance your needs.'],
-    ['The Devil','⛓','no','Check for pressure, fear, or a pattern that limits your freedom.','A familiar bind can loosen when you name it. Look for one safe choice you control.'],
-    ['The Tower','⚡','no','The current structure may be too shaky for a confident yes. Make room for truth.','A disruption may expose what needs rebuilding. Avoid rushing to restore the old pattern.'],
-    ['The Star','✳','yes','Hope can be useful when paired with one realistic step toward repair.','You may need to renew your energy before leaning on hope alone.'],
-    ['The Moon','☽','maybe','Some details are still unclear. Check what is known before acting on a fear.','Confusion may be easing, but do not mistake partial clarity for certainty.'],
-    ['The Sun','☀','yes','Clarity and openness support a wholehearted next step.','A bright possibility still needs practical care. Check the details.'],
-    ['Judgement','♫','yes','A clear-eyed review may show that you are ready to answer a call.','Old self-criticism may distort the decision. Separate learning from blame.'],
-    ['The World','◎','yes','A cycle may be ready to complete. Recognize what you have learned.','One loose end may deserve attention before you close this chapter.']
-  ];
   const $ = id => document.getElementById(id);
   const deck = $('ynt-deck');
-  if (!deck) return;
-  const picks = Array.from(deck.querySelectorAll('.ynt-pick'));
-  let drawn = false;
-  let shuffled = [];
+  const cards = window.YNT_DATA;
+  const art = window.YNT_ART;
+  if (!deck || !cards || !art) return;
+
+  const FAN = 10; // скільки карт показано у віялі
+  const SPREADS = {
+    one:    { count: 1, labels: ['Your card'], weights: [1], note: '' },
+    ppf:    { count: 3, labels: ['Past', 'Present', 'Future'], weights: [0.7, 1, 1.3], note: 'The Future card carries the most weight, the Past the least.' },
+    soa:    { count: 3, labels: ['Situation', 'Obstacle', 'Advice'], weights: [1, 0.7, 1.3], note: 'The Advice card carries the most weight, the Obstacle the least.' },
+    five:   { count: 5, labels: ['Situation', 'Obstacle', 'Hidden influence', 'Advice', 'Direction'], weights: [1, 0.8, 0.8, 1.2, 1.4], note: 'The Direction and Advice cards carry the most weight.' }
+  };
+  const WORD = { yes: 'Yes', no: 'No', maybe: 'Maybe' };
+  const SCORE = { yes: 1, no: -1, maybe: 0 };
+  const ORDINAL = ['', 'one', 'two', 'three', 'four', 'five'];
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // Відкидання залишку усуває упередження операції modulo.
   const random = max => {
     const values = new Uint32Array(1);
@@ -38,39 +26,227 @@
     do { window.crypto.getRandomValues(values); } while (values[0] >= limit);
     return values[0] % max;
   };
+
+  let spreadKey = 'one';
+  let order = [];          // перетасована колода (індекси карт, без повторів)
+  let chosen = [];         // позиції у віялі, які вибрав користувач
+  let picks = [];
+  let revealed = false;
+
   const shuffle = () => {
-    shuffled = cards.slice();
-    for (let i = shuffled.length - 1; i > 0; i--) {
+    order = cards.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
       const j = random(i + 1);
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      [order[i], order[j]] = [order[j], order[i]];
     }
   };
-  const reveal = index => {
-    if (drawn) return;
-    drawn = true;
-    const card = shuffled[index];
-    const reversed = random(2) === 1;
-    const lean = reversed ? ({yes:'Maybe',no:'Maybe',maybe:'No'})[card[2]] : ({yes:'Yes',no:'No',maybe:'Maybe'})[card[2]];
-    $('ynt-symbol').textContent = card[1];
-    $('ynt-card-name').textContent = card[0];
-    $('ynt-orientation').textContent = reversed ? 'Reversed' : 'Upright';
-    $('ynt-lean').textContent = lean;
-    $('ynt-meaning').textContent = reversed ? card[4] : card[3];
-    $('ynt-context').textContent = `${lean} is a symbolic lean, not a decision or forecast. Compare it with what you know about your question.`;
-    $('ynt-prompt').textContent = lean === 'Yes' ? 'Name one small, reversible step you can try, and one sign that would tell you to pause.' : lean === 'No' ? 'What would need to change before this choice feels safe and aligned with your values?' : 'Which missing fact or conversation would make your next step clearer?';
+
+  // Спільний SVG-символ рубашки вставляється один раз.
+  const sprite = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  sprite.setAttribute('width', '0');
+  sprite.setAttribute('height', '0');
+  sprite.setAttribute('aria-hidden', 'true');
+  sprite.style.position = 'absolute';
+  sprite.innerHTML = art.backSymbol;
+  document.body.appendChild(sprite);
+  const backSvg = () => '<svg class="ynt-back-svg" viewBox="0 0 200 300" aria-hidden="true" focusable="false"><use href="#ynt-back-art"/></svg>';
+
+  const buildFan = () => {
+    deck.textContent = '';
+    picks = [];
+    const mid = (FAN - 1) / 2;
+    for (let i = 0; i < FAN; i++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ynt-pick';
+      b.style.setProperty('--ynt-rotation', ((i - mid) * 3.4).toFixed(1) + 'deg');
+      b.style.setProperty('--ynt-offset', (Math.pow(i - mid, 2) * 0.95).toFixed(1) + 'px');
+      b.innerHTML = '<span class="ynt-back">' + backSvg() + '</span><span class="ynt-check" aria-hidden="true">✓</span>';
+      b.addEventListener('click', () => toggle(i));
+      deck.appendChild(b);
+      picks.push(b);
+    }
+    refresh();
+  };
+
+  const status = $('ynt-status');
+  const revealBtn = $('ynt-reveal');
+  const clearBtn = $('ynt-clear');
+
+  const refresh = () => {
+    const need = SPREADS[spreadKey].count;
+    const done = chosen.length === need;
+    picks.forEach((b, i) => {
+      const pos = chosen.indexOf(i);
+      const on = pos > -1;
+      b.classList.toggle('is-chosen', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.disabled = !on && done && need > 1;
+      b.querySelector('.ynt-check').textContent = on && need > 1 ? String(pos + 1) : '✓';
+      b.setAttribute('aria-label', 'Card ' + (i + 1) + ' of ' + FAN + ', face down' + (on ? ', chosen as number ' + (pos + 1) : '') + (need === 1 ? '' : (on ? '. Press to deselect.' : '')));
+    });
+    if (need === 1) {
+      status.textContent = '';
+      revealBtn.hidden = true;
+      clearBtn.hidden = true;
+      return;
+    }
+    revealBtn.hidden = false;
+    clearBtn.hidden = false;
+    revealBtn.disabled = !done;
+    clearBtn.disabled = chosen.length === 0;
+    status.textContent = done
+      ? need + ' of ' + need + ' chosen. Press Reveal to turn your cards.'
+      : chosen.length + ' of ' + need + ' chosen. Pick ' + (need - chosen.length) + ' more.';
+  };
+
+  const toggle = i => {
+    if (revealed) return;
+    const need = SPREADS[spreadKey].count;
+    const at = chosen.indexOf(i);
+    if (need === 1) { chosen = [i]; refresh(); show(); return; }
+    if (at > -1) chosen.splice(at, 1);
+    else if (chosen.length < need) chosen.push(i);
+    refresh();
+  };
+
+  const setSpread = key => {
+    spreadKey = key;
+    chosen = [];
+    document.querySelectorAll('.ynt-spread-btn').forEach(btn => btn.setAttribute('aria-pressed', btn.dataset.spread === key ? 'true' : 'false'));
+    const need = SPREADS[key].count;
+    $('ynt-spread-help').textContent = need === 1
+      ? 'Think of a question you can answer with yes or no, then select any card.'
+      : 'Think of your question, then choose ' + ORDINAL[need] + ' cards. Select a chosen card again to put it back.';
+    deck.setAttribute('aria-label', 'Choose ' + ORDINAL[need] + ' tarot card' + (need > 1 ? 's' : ''));
+    $('ynt-kicker-spread').textContent = 'The Major Arcana · ' + (need === 1 ? 'One-card reading' : need + '-card spread');
+    $('ynt-deck-note').textContent = 'Choose from ' + FAN + ' cards. Scroll the spread on smaller screens. All 22 Major Arcana are in the deck.';
+    refresh();
+  };
+
+  const leanOf = (s) => s >= 0.6 ? ['Yes', 'yes'] : s >= 0.2 ? ['Leaning yes', 'yes'] : s > -0.2 ? ['Maybe', 'maybe'] : s > -0.6 ? ['Leaning no', 'no'] : ['No', 'no'];
+
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  };
+
+  const detail = (c, label, open) => {
+    const d = el('details', 'ynt-detail');
+    if (open) d.open = true;
+    const s = el('summary');
+    s.appendChild(el('span', 'ynt-detail-pos', label));
+    s.appendChild(el('span', 'ynt-detail-name', c.name + ' · ' + (c.reversed ? 'Reversed' : 'Upright')));
+    s.appendChild(el('span', 'ynt-chip ynt-chip-' + c.lean, WORD[c.lean]));
+    d.appendChild(s);
+    const body = el('div', 'ynt-detail-body');
+    body.appendChild(el('p', 'ynt-keywords', 'Keywords: ' + c.o.kw.join(' · ')));
+    c.o.text.split('\n\n').forEach(t => body.appendChild(el('p', '', t)));
+    const grid = el('div', 'ynt-aspects');
+    [['Love & relationships', c.o.love], ['Career & money', c.o.career], ['Personal growth', c.o.growth]].forEach(a => {
+      const box = el('div', 'ynt-aspect');
+      box.appendChild(el('h4', '', a[0]));
+      box.appendChild(el('p', '', a[1]));
+      grid.appendChild(box);
+    });
+    body.appendChild(grid);
+    const q = el('p', 'ynt-question');
+    q.appendChild(el('strong', '', 'Reflect: '));
+    q.appendChild(document.createTextNode(c.o.q));
+    body.appendChild(q);
+    d.appendChild(body);
+    return d;
+  };
+
+  const show = () => {
+    if (revealed) return;
+    revealed = true;
+    const sp = SPREADS[spreadKey];
+    const drawn = chosen.map((fanIndex, k) => {
+      const data = cards[order[fanIndex]];
+      const reversed = random(2) === 1;
+      const o = reversed ? data.rev : data.up;
+      return { id: order[fanIndex], name: data.n, reversed, o, lean: o.lean, label: sp.labels[k] };
+    });
+    // Підсумок: зважена сума нахилів кожної карти.
+    let sum = 0, wsum = 0;
+    const counts = { yes: 0, no: 0, maybe: 0 };
+    drawn.forEach((c, k) => { sum += SCORE[c.lean] * sp.weights[k]; wsum += sp.weights[k]; counts[c.lean]++; });
+    const score = sum / wsum;
+    const [headline, tone] = leanOf(score);
+
+    const row = $('ynt-spread-row');
+    row.textContent = '';
+    row.dataset.count = String(sp.count);
+    drawn.forEach(c => {
+      const fig = el('figure', 'ynt-slot');
+      if (sp.count > 1) fig.appendChild(el('figcaption', 'ynt-slot-label', c.label));
+      const flip = el('div', 'ynt-flip');
+      const inner = el('div', 'ynt-flip-inner');
+      const front = el('div', 'ynt-flip-face ynt-flip-front');
+      front.innerHTML = backSvg();
+      const back = el('div', 'ynt-flip-face ynt-flip-rear');
+      back.innerHTML = art.face(c.id, c.name, c.reversed);
+      inner.appendChild(front);
+      inner.appendChild(back);
+      flip.appendChild(inner);
+      fig.appendChild(flip);
+      fig.appendChild(el('span', 'ynt-slot-orient', c.reversed ? 'Reversed' : 'Upright'));
+      row.appendChild(fig);
+    });
+
+    $('ynt-lean').textContent = headline;
+    $('ynt-lean').dataset.tone = tone;
+
+    let summary;
+    if (sp.count === 1) {
+      const c = drawn[0];
+      summary = c.name + (c.reversed ? ' reversed' : ' upright') + ' leans ' + WORD[c.lean].toLowerCase() + '. ' + c.o.text.split('\n\n')[0];
+    } else {
+      const parts = [];
+      if (counts.yes) parts.push(counts.yes + ' lean yes');
+      if (counts.maybe) parts.push(counts.maybe + ' ' + (counts.maybe === 1 ? 'leans' : 'lean') + ' maybe');
+      if (counts.no) parts.push(counts.no + ' lean no');
+      summary = 'Of your ' + sp.count + ' cards, ' + parts.join(', ') + '. ' + sp.note + ' Weighing them together gives a symbolic answer of ' + headline.toLowerCase() + '. ' +
+        (counts.yes && counts.no ? 'The cards pull in different directions, so treat the answer as conditional and read each card below.' : 'Read each card below to see what shapes the overall picture.');
+    }
+    $('ynt-meaning').textContent = summary;
+    $('ynt-context').textContent = headline + ' is a symbolic lean, not a decision or forecast. Compare it with what you know about your question.';
+    $('ynt-prompt').textContent = tone === 'yes' ? 'Name one small, reversible step you can try, and one sign that would tell you to pause.' : tone === 'no' ? 'What would need to change before this choice feels safe and aligned with your values?' : 'Which missing fact or conversation would make your next step clearer?';
+
+    const list = $('ynt-details');
+    list.textContent = '';
+    list.appendChild(el('h3', 'ynt-details-title', sp.count === 1 ? 'What your card means' : 'Your cards, one by one'));
+    drawn.forEach(c => list.appendChild(detail(c, sp.count === 1 ? 'Meaning' : c.label, sp.count === 1)));
+
     $('ynt-selection').hidden = true;
     $('ynt-result').hidden = false;
-    $('ynt-lean').focus();
+    // Фокус — на заголовку відповіді; прокрутка не стрибає, якщо рух зменшено.
+    $('ynt-lean').focus({ preventScroll: false });
+    const flips = row.querySelectorAll('.ynt-flip');
+    if (reduced) flips.forEach(f => f.classList.add('is-flipped'));
+    else flips.forEach((f, k) => setTimeout(() => f.classList.add('is-flipped'), 350 + k * 450));
   };
-  picks.forEach((pick, index) => pick.addEventListener('click', () => reveal(index)));
-  shuffle();
-  deck.hidden = false;
-  $('ynt-deck-note').hidden = false;
+
+  document.querySelectorAll('.ynt-spread-btn').forEach(btn => btn.addEventListener('click', () => { if (!revealed) setSpread(btn.dataset.spread); }));
+  revealBtn.addEventListener('click', () => { if (chosen.length === SPREADS[spreadKey].count) show(); });
+  clearBtn.addEventListener('click', () => { chosen = []; refresh(); });
   $('ynt-again').addEventListener('click', () => {
     $('ynt-result').hidden = true;
-    drawn = false;
+    revealed = false;
+    chosen = [];
     shuffle();
+    buildFan();
     $('ynt-selection').hidden = false;
     picks[0].focus();
   });
+
+  shuffle();
+  setSpread('one');
+  buildFan();
+  deck.hidden = false;
+  $('ynt-controls').hidden = false;
+  $('ynt-deck-note').hidden = false;
 })();

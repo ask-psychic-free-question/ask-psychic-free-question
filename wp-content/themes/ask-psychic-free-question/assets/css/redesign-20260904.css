@@ -657,3 +657,18 @@ a:focus-visible {
 .site-footer .footer-instagram{display:inline-flex;align-items:center;gap:10px;margin-top:8px;text-decoration:none;font-weight:600}
 .site-footer .footer-instagram svg{display:block;flex:none;color:#F6D58A;transition:transform .2s ease}
 .site-footer .footer-instagram:hover svg,.site-footer .footer-instagram:focus-visible svg{transform:rotate(-8deg)}
+
+/* Контраст перевірених підписів і кнопок, 17.11.2026. */
+html[lang="en-US"] .hero__eyebrow,
+html[lang="en-US"] .home-guide__kicker,
+html[lang="en-US"] .hb-scope .hb-eyebrow { color: #8A5D2E; }
+html[lang="en-US"] .hero__disclosure,
+html[lang="en-US"] .hero__disclosure a { color: #526866; }
+html[lang="en-US"] .testimonial-card__label { color: #D4DDD4; }
+html[lang="en-US"] .hb-scope a.wp-block-button__link.hb-cta { background: #8A5D2E; }
+html[lang="en-US"] .hb-scope a.wp-block-button__link.hb-cta:hover,
+html[lang="en-US"] .hb-scope a.wp-block-button__link.hb-cta:focus-visible { background: #754A20; }
+html[lang="en-US"] .hb-scope .hb-good-label { color: #267A41; }
+html[lang="en-US"] .hb-scope .hb-avoid-label { color: #667080; }
+/* Контраст поточного пункту навігаційного ланцюжка. */
+html[lang="en-US"] nav.breadcrumbs li span[itemprop="name"] { color: #526866; }

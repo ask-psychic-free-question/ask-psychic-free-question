@@ -346,13 +346,13 @@ h4 {
 <link rel="stylesheet" href="/nebula-quiz/quiz.css?v=8132de1df6e3" data-nebula-quiz="style">
 <script src="/nebula-quiz/quiz.js?v=8132de1df6e3" defer data-nebula-quiz="script"></script>
 <style id="localized-contrast-fix">
-/* Контраст CTA французьких і нідерландських сторінок без зміни бузкового акценту. */
-.btn.btn-gold,
-.btn.btn-gold:hover,
-.btn.btn-gold:focus,
-.btn.btn-gold:focus-visible { color: #24383a; background: #c8a8e9; }
-.btn.btn-gold:hover { background: #b794dd; }
-.btn.btn-gold:focus-visible { outline: 2px solid #513565; outline-offset: 3px; }
+/* Контраст локалізованих заголовків і всіх наявних різновидів CTA. */
+.btn:is(.btn-gold, .btn-outline, .btn-ghost, .btn-white),
+.btn:is(.btn-gold, .btn-outline, .btn-ghost, .btn-white):hover,
+.btn:is(.btn-gold, .btn-outline, .btn-ghost, .btn-white):focus,
+.btn:is(.btn-gold, .btn-outline, .btn-ghost, .btn-white):focus-visible { color: #24383a; background: #c8a8e9; }
+.btn:is(.btn-gold, .btn-outline, .btn-ghost, .btn-white):hover { background: #b794dd; }
+.btn:is(.btn-gold, .btn-outline, .btn-ghost, .btn-white):focus-visible { outline: 2px solid #513565; outline-offset: 3px; }
 </style>
 </head>
 
